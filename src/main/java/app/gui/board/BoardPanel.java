@@ -1,7 +1,6 @@
 package app.gui.board;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -14,9 +13,7 @@ import javax.swing.JPanel;
 import app.gui.board.grid.Grid;
 import app.gui.board.grid.PrimaryGrid;
 import app.gui.board.grid.TrackingGrid;
-import app.logics.board.EnemyBoard;
 import app.logics.board.IBoard;
-import app.logics.board.MyBoard;
 
 /**
  * Class provides graphical interface for board. Board panel provides two grids. The smaller grid
@@ -26,6 +23,10 @@ import app.logics.board.MyBoard;
  *
  */
 public class BoardPanel extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8154095607136767465L;
 	/**
 	 * Default width in px
 	 */
@@ -56,7 +57,6 @@ public class BoardPanel extends JPanel{
 													,squareSizeTrackingGrid*(gridSize + 1));
 	private Point trackingGridStart = new Point(squareSizeTrackingGrid,squareSizeTrackingGrid);
 	
-	private String resultOfShoot = " Miss";
 	private JLabel result = new JLabel("Result");
 
 

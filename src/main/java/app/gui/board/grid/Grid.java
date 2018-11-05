@@ -6,8 +6,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.io.Serializable;
 
-import javax.swing.JLabel;
-
 import app.logics.board.IBoard;
 
 /**
@@ -56,8 +54,6 @@ public class Grid implements Serializable{
 	 */
 	protected double ratioSquareToFont = 0.3;
 	
-	private String resultOfShoot = " Miss";
-	private JLabel result = new JLabel("Result");
 
 	/**
 	 * Board To be represented on the grid
