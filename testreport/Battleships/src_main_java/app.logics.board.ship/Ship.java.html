@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Ship.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">app.logics.board.ship</a> &gt; <span class="el_source">Ship.java</span></div><h1>Ship.java</h1><pre class="source lang-java linenums">package app.logics.board.ship;
+
+/**
+ * Represents general ship
+ * @author Artur Vitt
+ *
+ */
+<span class="fc" id="L8">public abstract class Ship {</span>
+<span class="fc" id="L9">	public static enum ORIENTATION{HORIZONTAL,VERTICAL};</span>
+	/** Start location of ship on the greed, first value in array
+	 * presents X axes and the second value Y axis */
+<span class="fc" id="L12">	private int startLocationY = -1;</span>
+<span class="fc" id="L13">	private int startLocationX = -1;</span>
+	/** Orientation of the ship with respect to the grid */
+<span class="fc" id="L15">	private ORIENTATION orientation = ORIENTATION.HORIZONTAL;</span>
+
+	/**
+	 * Gets the size of the ship
+	 * @return size of the ship
+	 */
+	public abstract int getSize();
+
+	/**
+	 * Returns copy of location, X first, then Y
+	 * @return x,y indexes, presenting start count on the grid
+	 */
+	public int[] getStartLocation() {
+<span class="fc" id="L28">		return new int[] {startLocationX,startLocationY};</span>
+	}
+
+	/**
+	 * Stores index values used to represent the ship on different variables
+	 * @param startLocation - indexes
+	 */
+	public void setStartLocation(int[] startLocation) {
+<span class="fc" id="L36">		startLocationX = startLocation[0];</span>
+<span class="fc" id="L37">		startLocationY = startLocation[1];</span>
+<span class="fc" id="L38">	}</span>
+
+	public ORIENTATION getOrientation() {
+<span class="fc" id="L41">		return orientation;</span>
+	}
+
+	public void setOrientation(ORIENTATION orientation) {
+<span class="fc" id="L45">		this.orientation = orientation;</span>
+<span class="fc" id="L46">	}</span>
+
+	public int getStartLocationY() {
+<span class="fc" id="L49">		return startLocationY;</span>
+	}
+
+	public int getStartLocationX() {
+<span class="fc" id="L53">		return startLocationX;</span>
+	}
+
+	public void setStartY(int startY) {
+<span class="fc" id="L57">		startLocationY = startY;</span>
+
+<span class="fc" id="L59">	}</span>
+
+	public void setStartX(int startX) {
+<span class="fc" id="L62">		startLocationX = startX;		</span>
+<span class="fc" id="L63">	}</span>
+
+	/**
+	 * Tests if value under indexes x,y represent state of this ship
+	 * @param x index character dimension
+	 * @param y index numerical dimension
+	 * @return true if index belongs to ship indexes
+	 */
+	public boolean contains(int x, int y) {
+<span class="pc bpc" id="L72" title="1 of 3 branches missed.">		switch(orientation) {</span>
+		case HORIZONTAL:
+<span class="fc bfc" id="L74" title="All 2 branches covered.">			if(isInsideHitBox(startLocationX,startLocationY,getSize(),1,x,y)) {</span>
+<span class="fc" id="L75">				return true;</span>
+			}else {
+<span class="fc" id="L77">				return false;</span>
+			}
+		case VERTICAL:
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">			if(isInsideHitBox(startLocationX,startLocationY,1,getSize(),x,y)) {</span>
+<span class="fc" id="L81">				return true;</span>
+			}else {
+<span class="nc" id="L83">				return false;</span>
+			}
+		default: 
+<span class="nc" id="L86">			return false;</span>
+		}
+	}
+
+	private boolean isInsideHitBox(int startX, int startY, int width, int height
+			,int x, int y) {
+<span class="pc bpc" id="L92" title="2 of 6 branches missed.">		return startX &lt;= x &amp;&amp; x &lt; startX + width &amp;&amp; </span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">			   startY &lt;= y &amp;&amp; y &lt; startY + height;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>

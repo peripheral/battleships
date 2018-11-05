@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Board.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">app.logics.board</a> &gt; <span class="el_source">Board.java</span></div><h1>Board.java</h1><pre class="source lang-java linenums">package app.logics.board;
+
+import java.util.Random;
+
+import app.logics.board.ship.Ship;
+import app.logics.board.ship.Ship.ORIENTATION;
+
+/**
+ * Base class that represents board logics, fire,miss,hit, ship placement. Class provides ship placement mechanism, 
+ * and mechanism for tracking sectors fired at and sectors occupied by ships. Contains also specifications 
+ * for different messages.
+ * @author Artur Vitt
+ *
+ */
+<span class="fc" id="L15">public class Board implements IBoard {</span>
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7329724161796655679L;
+
+	/**
+	 * Board default width dimension
+	 */
+	public static final int BOARD_WIDTH_DEFAULT = 10;
+
+	/**
+	 * Board default height dimension
+	 */
+	public static final int BOARD_HEIGHT_DEFAULT = 10;
+
+	/**
+	 * Ships that are placed on the tabled
+	 */
+	private Ship[] ships;
+
+	/**
+	 * Keeps track of sectors which ships occupy  
+	 */
+<span class="fc" id="L39">	private boolean[][] occupiedFields = new boolean[BOARD_HEIGHT_DEFAULT][BOARD_WIDTH_DEFAULT];</span>
+
+	public boolean[][] getOccupiedFields() {
+<span class="fc" id="L42">		return occupiedFields;</span>
+	}
+
+	public void setOccupiedFields(boolean[][] occupiedFields) {
+<span class="fc" id="L46">		this.occupiedFields = occupiedFields;</span>
+<span class="fc" id="L47">	}</span>
+
+	/**
+	 * Keeps track of attacked fields  
+	 */
+<span class="fc" id="L52">	private boolean[][] attackedField = new boolean[BOARD_HEIGHT_DEFAULT][BOARD_WIDTH_DEFAULT];</span>
+	
+	public static final String MESSAGE_MISS = &quot;Miss!&quot;;
+	public static final String MESSAGE_HIT = &quot;Hit!&quot;;
+	public static final String MESSAGE_SANK = &quot;You sank my battleship!&quot;;
+	public static final String MESSAGE_ALL_DESTROYED = &quot;All ships destroyed!&quot;;
+	public static final String MESSAGE_WRONG_ADDRESS = &quot;Wrong Address, must be 1-10, a-j,A-J&quot;;
+
+	public void setShips(Ship[] ships) {
+<span class="fc" id="L61">		this.ships = ships;		</span>
+<span class="fc" id="L62">	}</span>
+
+	public Ship[] getShips() {
+<span class="fc" id="L65">		return ships;</span>
+	}
+
+	/**
+	 * Randomly position ships on the board
+	 */
+	public void positionShipsRandomly() {
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		for(Ship ship:ships) {</span>
+<span class="fc" id="L73">			positionShipRandomly(ship,occupiedFields);</span>
+		}
+<span class="fc" id="L75">	}</span>
+	
+	/**
+	 * Reuse of random object
+	 */
+<span class="fc" id="L80">	private Random rm = new Random();</span>
+	
+	/**
+	 * Place ship on the grid. Find place and mark the occupied sectors
+	 * @param ship -ship to be positioned
+	 * @param b - map of currently occupied squares
+	 */
+	private void positionShipRandomly(Ship ship, boolean[][] b) {
+<span class="fc" id="L88">		setRandomOrientation(ship);</span>
+<span class="fc" id="L89">		ship.setStartLocation(new int[] {rm.nextInt(BOARD_WIDTH_DEFAULT),rm.nextInt(BOARD_HEIGHT_DEFAULT)});</span>
+<span class="fc" id="L90">		int[] startLocation  = findFreePosition(b, ship);</span>
+<span class="fc" id="L91">		ship.setStartLocation(startLocation);</span>
+<span class="fc" id="L92">		markOccupiedSectors(b,ship);</span>
+<span class="fc" id="L93">	}</span>
+
+	/**
+	 * Marks sectors occupied by the ship
+	 * @param ship - ship
+	 * @param b - two dimensional array of type boolean [col][row]
+	 */
+	public void markOccupiedSectors(boolean[][] b,Ship ship) {
+<span class="pc bpc" id="L101" title="1 of 3 branches missed.">		switch(ship.getOrientation()) {</span>
+		case HORIZONTAL:
+<span class="fc bfc" id="L103" title="All 2 branches covered.">			for (int i = 0; i &lt; ship.getSize(); i++) {</span>
+<span class="fc" id="L104">				markSector(b,ship.getStartLocationX()+i,ship.getStartLocationY());</span>
+			}
+<span class="fc" id="L106">			return;</span>
+		case VERTICAL:
+<span class="fc bfc" id="L108" title="All 2 branches covered.">			for (int i = 0; i &lt; ship.getSize(); i++) {</span>
+<span class="fc" id="L109">				markSector(b,ship.getStartLocationX(),ship.getStartLocationY() + i);</span>
+			}
+<span class="fc" id="L111">			return;</span>
+		default:
+<span class="nc" id="L113">			return;</span>
+		}
+	}
+
+	/**
+	 * Mark sector by setting
+	 * value at index [x][y] to true
+	 * @param b - board
+	 * @param x - column
+	 * @param y - row 
+	 */
+	private void markSector(boolean[][] b, int x, int y) {
+<span class="fc" id="L125">		b[x][y] = true;		</span>
+<span class="fc" id="L126">	}</span>
+
+	/**
+	 * Find available location for the ship with current orientation
+	 * @param b - currently occupied fields
+	 * @param ship - ship to be placed
+	 * @return - return -1,-1 if not found
+	 */
+	public int[] findFreePosition(boolean[][] b,Ship ship) {
+<span class="fc" id="L135">		int startX = ship.getStartLocation()[0];</span>
+<span class="fc" id="L136">		int startY = ship.getStartLocation()[1];</span>
+<span class="fc" id="L137">		boolean found = isSpaceAvailable(b, ship);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">		if(found) {</span>
+<span class="fc" id="L139">			return new int[]{startX,startY};</span>
+		}
+
+		/* Iterate over rows and columns  */
+<span class="fc bfc" id="L143" title="All 2 branches covered.">		for(int row = 0; row &lt; b.length;row ++) {</span>
+<span class="fc" id="L144">			startY = (startY + 1)%b.length;</span>
+<span class="fc" id="L145">			ship.setStartY(startY);</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">			for(int col = 0;col &lt; b[row].length;col ++ ) {</span>
+<span class="fc" id="L147">				startX = (startX + 1)%b[row].length;</span>
+<span class="fc" id="L148">				ship.setStartX(startX);</span>
+<span class="fc" id="L149">				found = isSpaceAvailable(b, ship);</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">				if(found) {</span>
+<span class="fc" id="L151">					return new int[]{startX,startY};</span>
+				}
+			}
+
+		}
+
+		/* Return negatives if available space not found */
+<span class="fc" id="L158">		return new int[]{-1,-1};			</span>
+	}
+
+
+	/**
+	 * Tests if the ship can be placed this position
+	 * @param board - board description
+	 * @param ship ship to be placed(location, orientation,size) 
+	 * @return true if space is not occupied, else false
+	 */
+	public boolean isSpaceAvailable(boolean[][] board,Ship ship) {
+<span class="fc" id="L169">		int startX =  ship.getStartLocationX();</span>
+<span class="fc" id="L170">		int startY = ship.getStartLocationY();</span>
+<span class="fc" id="L171">		int size = ship.getSize();</span>
+<span class="fc" id="L172">		ORIENTATION orientation = ship.getOrientation();</span>
+<span class="pc bpc" id="L173" title="1 of 3 branches missed.">		switch(orientation) {</span>
+		case HORIZONTAL:
+<span class="fc bfc" id="L175" title="All 2 branches covered.">			if(!isWidthinBoardBoundary(startX+size-1,startY,board)) {</span>
+<span class="fc" id="L176">				return false;</span>
+			}
+<span class="fc bfc" id="L178" title="All 2 branches covered.">			for (int i = 0; i &lt; size; i++) {</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">				if(board[startX+i][startY]) {</span>
+<span class="fc" id="L180">					return false;</span>
+				}
+			}
+<span class="fc" id="L183">			return  true;</span>
+		case VERTICAL:
+<span class="fc bfc" id="L185" title="All 2 branches covered.">			if(!isWidthinBoardBoundary(startX,startY+size-1,board)) {</span>
+<span class="fc" id="L186">				return false;</span>
+			}
+<span class="fc bfc" id="L188" title="All 2 branches covered.">			for (int i = 0; i &lt; size; i++) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">				if(board[startX][startY+i]) {</span>
+<span class="fc" id="L190">					return false;</span>
+				}
+			}
+<span class="fc" id="L193">			return  true;</span>
+		default:
+			break;
+		}
+<span class="nc" id="L197">		return false;</span>
+	}
+
+	private boolean isWidthinBoardBoundary(int endX, int endY, boolean[][] b) {
+<span class="fc bfc" id="L201" title="All 4 branches covered.">		return endX &lt; b.length &amp;&amp; endY &lt; b[0].length;</span>
+	}
+	
+	/**
+	 * Set random orientation on the ship
+	 * @param ship object to which orientation will be set
+	 */
+	public void setRandomOrientation(Ship ship) {
+<span class="fc" id="L209">		ship.setOrientation(ORIENTATION.values()[rm.nextInt(ORIENTATION.values().length)]);</span>
+<span class="fc" id="L210">	}</span>
+
+	public String fire(int x,int y) {
+<span class="fc bfc" id="L213" title="All 2 branches covered.">		if(isWithinBoard(x,y)) {</span>
+<span class="fc" id="L214">			CasualtyReport report   = applyShot(this,x,y);</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">			if(report.allShipsDestroyed) {</span>
+<span class="fc" id="L216">				return MESSAGE_ALL_DESTROYED;</span>
+			}else {
+<span class="fc" id="L218">				return report.toString();</span>
+			}			
+		}
+<span class="fc" id="L221">		return MESSAGE_MISS;</span>
+	}
+
+	private boolean isWithinBoard(int x, int y) {		
+<span class="pc bpc" id="L225" title="2 of 6 branches missed.">		return x &lt; BOARD_WIDTH_DEFAULT &amp;&amp; y &lt; BOARD_HEIGHT_DEFAULT &amp;&amp;</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">			   x &gt;= 0  &amp;&amp; y &gt;= 0 ;</span>
+	}
+
+	public CasualtyReport applyShot(Board board,int x, int y) {
+<span class="fc" id="L230">		CasualtyReport report = new CasualtyReport();</span>
+<span class="fc" id="L231">		Ship ship = consumeShot(board, x,y);</span>
+		String message;
+<span class="fc" id="L233">		boolean isDestroyed = false;</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">		if(ship != null) {</span>
+<span class="fc" id="L235">			isDestroyed = isShipDestroyed(board,ship);</span>
+		}
+<span class="fc bfc" id="L237" title="All 2 branches covered.">		if(ship == null) {</span>
+<span class="fc" id="L238">			message = MESSAGE_MISS;</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">		}else if(!isDestroyed) {</span>
+<span class="fc" id="L240">			message = MESSAGE_HIT;</span>
+<span class="fc" id="L241">		}else {</span>
+<span class="fc" id="L242">			message = MESSAGE_SANK;</span>
+		}
+<span class="fc" id="L244">		report.setMessage(message);</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">		if(areAllShipsDestroyed(board)) {</span>
+<span class="fc" id="L246">			report.setAllShipsDestroyed(true);</span>
+		}
+<span class="fc" id="L248">		return report;		</span>
+	}
+
+	private boolean areAllShipsDestroyed(Board b) {
+<span class="fc bfc" id="L252" title="All 2 branches covered.">		for(Ship ship:b.ships) {</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">			if(!isShipDestroyed(b, ship)) {</span>
+<span class="fc" id="L254">				return false;</span>
+			}
+		}
+<span class="fc" id="L257">		return true;</span>
+	}
+
+	private Ship consumeShot(Board board, int x, int y) {
+<span class="fc" id="L261">		Ship hitShip = getHitTarget(board,x,y);</span>
+<span class="fc" id="L262">		board.attackedField[x][y] = true;</span>
+<span class="fc" id="L263">		return hitShip;</span>
+	}
+
+	private Ship getHitTarget(Board board, int x, int y) {
+<span class="pc bpc" id="L267" title="1 of 4 branches missed.">		if(board.occupiedFields[x][y] &amp;&amp; !board.attackedField[x][y]) {</span>
+<span class="fc" id="L268">			return getShip(board,x,y);</span>
+		}
+<span class="fc" id="L270">		return null;		</span>
+	}
+
+	private boolean isShipDestroyed(Board board, Ship ship) {
+<span class="fc" id="L274">		int squaresLeft = getLeftSquares(board.attackedField,ship);</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">		return squaresLeft  == 0;</span>
+	}
+
+	public int getLeftSquares(boolean[][] attackedField,Ship ship) {
+<span class="fc" id="L279">		int counter = 0;</span>
+<span class="pc bpc" id="L280" title="1 of 3 branches missed.">		switch(ship.getOrientation()) {</span>
+		case HORIZONTAL:
+<span class="fc bfc" id="L282" title="All 2 branches covered.">			for (int i = 0; i &lt; ship.getSize(); i++) {</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">				if(!attackedField[ship.getStartLocationX()+i][ship.getStartLocationY()]) {</span>
+<span class="fc" id="L284">					counter++;</span>
+				}
+			}
+<span class="fc" id="L287">			return counter;</span>
+		case VERTICAL:
+<span class="fc bfc" id="L289" title="All 2 branches covered.">			for (int i = 0; i &lt; ship.getSize(); i++) {</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">				if(!attackedField[ship.getStartLocationX()][ship.getStartLocationY()+i]) {</span>
+<span class="fc" id="L291">					counter++;</span>
+				}
+			}
+<span class="fc" id="L294">			return counter;</span>
+		default: 
+<span class="nc" id="L296">			return 0;</span>
+		}
+	}
+
+	/**
+	 * Get ship under coordinates
+	 * @param board
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private Ship getShip(Board board, int x, int y) {
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">		for(Ship ship:board.ships) {</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">			if(ship.contains(x,y)) {</span>
+<span class="fc" id="L310">				return ship;</span>
+			}
+		}
+<span class="nc" id="L313">		return null;</span>
+	}
+
+<span class="fc" id="L316">	class CasualtyReport{</span>
+<span class="fc" id="L317">		String message = MESSAGE_MISS; </span>
+<span class="fc" id="L318">		boolean allShipsDestroyed = false;</span>
+		public void setMessage(String m) {
+<span class="fc" id="L320">			message = m;</span>
+
+<span class="fc" id="L322">		}</span>
+		public void setAllShipsDestroyed(boolean b) {
+<span class="fc" id="L324">			allShipsDestroyed = b;</span>
+<span class="fc" id="L325">		}</span>
+
+		public String toString() {
+<span class="fc" id="L328">			return message;</span>
+		}
+
+	}
+
+	@Override
+	public String fire(int i, char a) {
+		int value;
+<span class="fc bfc" id="L336" title="All 4 branches covered.">		if('A' &lt;= a &amp;&amp; a &lt;= 'J') {</span>
+<span class="fc" id="L337">			value = a - 'A';</span>
+<span class="pc bpc" id="L338" title="1 of 4 branches missed.">		}else if('a' &lt;= a &amp;&amp; a &lt;= 'j') {</span>
+<span class="fc" id="L339">			value = a - 'a';</span>
+<span class="fc" id="L340">		}else {</span>
+<span class="fc" id="L341">			return MESSAGE_WRONG_ADDRESS;</span>
+		}
+<span class="fc" id="L343">		return fire(i,value);</span>
+	}
+
+	@Override
+	public int[][] getBoardState() {
+<span class="fc" id="L348">		int[][] state = new int[attackedField.length][];</span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">		for (int row = 0; row &lt; attackedField.length; row++) {</span>
+<span class="fc" id="L350">			state[row] = new int[attackedField[row].length];</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">			for (int col = 0; col &lt; state.length; col++) {</span>
+<span class="fc bfc" id="L352" title="All 4 branches covered.">				if( attackedField[row][col] &amp;&amp; occupiedFields[row][col]) {</span>
+<span class="fc" id="L353">					state[row][col] = 2;</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">				}else if(attackedField[row][col]) {</span>
+<span class="fc" id="L355">					state[row][col] = 1;</span>
+<span class="fc" id="L356">				}else {</span>
+<span class="fc" id="L357">					state[row][col] = 0;</span>
+				}
+			}
+		}
+<span class="fc" id="L361">		return state;</span>
+	}
+
+	public void setAttackedFields(boolean[][] attackedFields) {
+<span class="fc" id="L365">		this.attackedField = attackedFields;		</span>
+<span class="fc" id="L366">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>

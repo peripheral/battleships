@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>FleetFactory.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">app.logics.board.fleet.factory</a> &gt; <span class="el_source">FleetFactory.java</span></div><h1>FleetFactory.java</h1><pre class="source lang-java linenums">package app.logics.board.fleet.factory;
+
+import app.logics.board.fleet.FleetModel;
+import app.logics.board.ship.Aircraftcarrier;
+import app.logics.board.ship.Battleship;
+import app.logics.board.ship.Cruiser;
+import app.logics.board.ship.Destroyer;
+import app.logics.board.ship.Ship;
+import app.logics.board.ship.Submarine;
+
+/**
+ * Class implements creation of a fleet. Number of ships with specified quantities
+ * @author Artur Vitt
+ *
+ */
+public class FleetFactory {
+	private FleetFactory() {}
+	public static Ship[] getFleet() {
+<span class="fc" id="L19">		int totalShips = FleetModel.getFleetSize();</span>
+<span class="fc" id="L20">		int idx = 0;</span>
+<span class="fc" id="L21">		Ship[] ships = new Ship[totalShips];</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">		for(int i = 0; i &lt; FleetModel.AIRCRAFTCARRIER_COUNT;i++) {</span>
+<span class="fc" id="L23">			ships[idx++] = new Aircraftcarrier();</span>
+		}
+<span class="fc bfc" id="L25" title="All 2 branches covered.">		for(int i = 0; i &lt; FleetModel.BATTLESHIP_COUNT;i++) {</span>
+<span class="fc" id="L26">			ships[idx++] = new Battleship();</span>
+		}
+<span class="fc bfc" id="L28" title="All 2 branches covered.">		for(int i = 0; i &lt; FleetModel.CRUISER_COUNT;i++) {</span>
+<span class="fc" id="L29">			ships[idx++] = new Cruiser();</span>
+		}
+<span class="fc bfc" id="L31" title="All 2 branches covered.">		for(int i = 0; i &lt; FleetModel.DESTROYER_COUNT;i++) {</span>
+<span class="fc" id="L32">			ships[idx++] = new Destroyer();</span>
+		}
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		for(int i = 0; i &lt; FleetModel.SUBMARINE_COUNT;i++) {</span>
+<span class="fc" id="L35">			ships[idx++] = new Submarine();</span>
+		}
+<span class="fc" id="L37">		return ships;</span>
+	}		
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>

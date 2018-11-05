@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Grid.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">app.gui.board.grid</a> &gt; <span class="el_source">Grid.java</span></div><h1>Grid.java</h1><pre class="source lang-java linenums">package app.gui.board.grid;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.io.Serializable;
+
+import javax.swing.JLabel;
+
+import app.logics.board.IBoard;
+
+/**
+ * Base class for rendering grids. Draws squared grid of given size and legends for axis. 
+ * The size of each division can also be specified. Default size of font equates to 0.3 of square size.
+ * @author Artur Vitt
+ *
+ */
+<span class="nc" id="L19">public class Grid implements Serializable{</span>
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5846465486699271181L;
+	/**
+	 * Labels for vertical scale
+	 */
+<span class="nc" id="L28">	private String[] verticalScaleLabels = {&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;,&quot;7&quot;,&quot;8&quot;,&quot;9&quot;,&quot;10&quot;}; </span>
+	/**
+	 * Labels for horizontal scale
+	 */
+<span class="nc" id="L32">	private String[] horizontalScaleLabels = { &quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;D&quot;,&quot;E&quot;,&quot;F&quot;,&quot;G&quot;,&quot;H&quot;,&quot;I&quot;,&quot;J&quot;}; </span>
+	/**
+	 * Squire size in pixels
+	 */
+<span class="nc" id="L36">	protected int squareSize = 20;</span>
+	/**
+	 * Pixel start location for board grid
+	 */
+<span class="nc" id="L40">	protected Point gridStart = new Point();</span>
+	/**
+	 * Start location of horizontal text scale
+	 */
+<span class="nc" id="L44">	protected int[] horizontalTextScaleStart = {squareSize,12};</span>
+	/**
+	 * Start location of vertical text scale
+	 */
+<span class="nc" id="L48">	protected int[] verticalTextScaleStart = {2,squareSize+7};</span>
+	/**
+	 * Grid size in squares, 10 squares in width and height
+	 */
+<span class="nc" id="L52">	protected int gridSize = 10;</span>
+	
+	/**
+	 * Ratio square to font size
+	 */
+<span class="nc" id="L57">	protected double ratioSquareToFont = 0.3;</span>
+	
+<span class="nc" id="L59">	private String resultOfShoot = &quot; Miss&quot;;</span>
+<span class="nc" id="L60">	private JLabel result = new JLabel(&quot;Result&quot;);</span>
+
+	/**
+	 * Board To be represented on the grid
+	 */
+	protected IBoard board;
+
+
+	
+
+	/**
+	 * Performs the drawing of the grid.
+	 * @param g -graphical context 
+	 */
+	public void draw(Graphics g) {
+<span class="nc" id="L75">		g.setColor(Color.BLACK);</span>
+<span class="nc" id="L76">		g.setFont(new Font(null,Font.PLAIN,(int)(squareSize-squareSize*ratioSquareToFont)));</span>
+<span class="nc" id="L77">		renderVerticalLabels(g,verticalTextScaleStart,verticalScaleLabels,squareSize);</span>
+<span class="nc" id="L78">		renderHorizontalLabel(g,horizontalTextScaleStart,horizontalScaleLabels,squareSize);</span>
+<span class="nc" id="L79">		renderGridLines(g,gridStart,gridSize,squareSize);	</span>
+<span class="nc" id="L80">	}</span>
+
+	/**
+	 * Renders grid lines
+	 * @param g - graphical context
+	 * @param startLoc - left top corner location
+	 * @param size - number of squares
+	 * @param squareSize - square size
+	 */
+	private void renderGridLines(Graphics g, Point startLoc, int size, int squareSize) {
+<span class="nc" id="L90">		g.setColor(Color.GRAY);</span>
+<span class="nc" id="L91">		Point p = (Point)startLoc.clone();</span>
+<span class="nc" id="L92">		p.translate(-squareSize, -squareSize);</span>
+<span class="nc" id="L93">		renderHorizontalLines(g,p,size+1,squareSize);</span>
+<span class="nc" id="L94">		renderVerticalLines(g, p, size+1, squareSize);</span>
+<span class="nc" id="L95">	}</span>
+
+	/**
+	 * Renders grid lines
+	 * @param g - graphical context
+	 * @param startLoc - start location
+	 * @param size - number of squares, with - height
+	 * @param squireSize - size of grid square
+	 */
+	private void renderVerticalLines(Graphics g, Point startLoc, int size, int squireSize) {
+<span class="nc bnc" id="L105" title="All 2 branches missed.">		for (int j = 0; j &lt; size+1; j++) {</span>
+<span class="nc" id="L106">			g.drawLine(startLoc.x+j*squireSize, startLoc.y,startLoc.x+j*squireSize,startLoc.y+size*squireSize);</span>
+		}		
+<span class="nc" id="L108">	}</span>
+
+	/**
+	 * Render parallel horizontal lines
+	 * @param g - graphical context
+	 * @param startLoc -start location
+	 * @param size - number of lines +1
+	 * @param squareSize - step size, pixels
+	 */
+	private void renderHorizontalLines(Graphics g, Point startLoc, int size, int squareSize) {
+<span class="nc bnc" id="L118" title="All 2 branches missed.">		for (int i = 0; i &lt; size+1; i++) {</span>
+<span class="nc" id="L119">			g.drawLine(startLoc.x, startLoc.y+i*squareSize,startLoc.x+size*squareSize,startLoc.y+i*squareSize);</span>
+		}			
+<span class="nc" id="L121">	}</span>
+	
+
+	/**
+	 * Renders horizontal scale
+	 * @param g - graphical context
+	 * @param startLoc - start location, pixels
+	 * @param text - text array
+	 * @param squireSize - step size
+	 */
+	private void renderHorizontalLabel(Graphics g, int[] startLoc, String[] text,
+			int squireSize) {		
+<span class="nc bnc" id="L133" title="All 2 branches missed.">		for (int i = 0; i &lt; text.length; i++) {</span>
+<span class="nc" id="L134">			g.drawString(text[i],startLoc[0]+squireSize*i,startLoc[1] );</span>
+		}			
+<span class="nc" id="L136">	}</span>
+
+	/**
+	 * Renders vertical scales
+	 * @param g - graphical context
+	 * @param startLoc - start location 
+	 * @param text - text array
+	 * @param squireSize - step size
+	 */
+	private void renderVerticalLabels(Graphics g,int[] startLoc, String[] text,int squireSize) {		
+<span class="nc bnc" id="L146" title="All 2 branches missed.">		for (int i = 0; i &lt; text.length; i++) {</span>
+<span class="nc" id="L147">			g.drawString(text[i],startLoc[0],startLoc[1] +squireSize*i);</span>
+		}		
+<span class="nc" id="L149">	}</span>
+	/**
+	 * Board to draw on the grid
+	 * @param board  logical board
+	 */
+	public void setBoard(IBoard board) {
+<span class="nc" id="L155">		this.board = board;		</span>
+<span class="nc" id="L156">	}</span>
+	
+	/**
+	 * Get active board
+	 * @return currently used board
+	 */
+	public IBoard getBoard() {
+<span class="nc" id="L163">		return board;		</span>
+	}
+
+	/**
+	 * Gets approximated id of the squire on grid
+	 * @param squareSize - size of square
+	 * @param p - pixel location on the Board panel
+	 * @return
+	 */
+	private Point getSquareCoordinates(int squareSize,Point p) {
+<span class="nc" id="L173">		return new Point( (int) ((p.x)/squareSize),</span>
+<span class="nc" id="L174">				(int) ((p.y)/squareSize));</span>
+	}
+	
+	/**
+	 * Gets approximated id of the squire on the grid
+	 * @param p - pixel location on panel where grid is
+	 * @return point with x,y being indexes of square
+	 */
+	public Point getSquareCoordinates(Point p) {
+<span class="nc" id="L183">		 p.translate(-gridStart.x, -gridStart.y);</span>
+<span class="nc" id="L184">		return getSquareCoordinates(squareSize, p);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>

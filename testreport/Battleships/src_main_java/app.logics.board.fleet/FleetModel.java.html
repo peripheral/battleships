@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>FleetModel.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">app.logics.board.fleet</a> &gt; <span class="el_source">FleetModel.java</span></div><h1>FleetModel.java</h1><pre class="source lang-java linenums">package app.logics.board.fleet;
+
+/**
+ * Class specifies fleet model. Size of a ship, and number per
+ * board.
+ * @author Artur Vitt
+ *
+ */
+public class FleetModel {
+	/**
+	 * Permitted number of Aircraft Carriers
+	 */
+	public static final int AIRCRAFTCARRIER_COUNT = 1;
+	/**
+	 * Permitted number of Battleships
+	 */
+	public static final int BATTLESHIP_COUNT = 1;
+	/**
+	 * Permitted number of Cruisers
+	 */
+	public static final int CRUISER_COUNT = 1;
+	/**
+	 * Permitted number of Destroyers
+	 */
+	public static final int DESTROYER_COUNT = 2;
+	/**
+	 * Permitted number of Submarines
+	 */
+	public static final int SUBMARINE_COUNT = 2;
+
+	/**
+	 * Size of aircraft carrier 
+	 */
+	public static final int AIRCRAFTCARRIER_SIZE = 5;
+	/**
+	 * Size of battleship
+	 */
+	public static final int BATTLESHIP_SIZE = 4;
+	/**
+	 * Size of cruiser
+	 */
+	public static final int CRUISER_SIZE = 3;
+	/**
+	 * Size of destroyer
+	 */
+	public static final int DESTROYER_SIZE = 2;
+	/**
+	 * Size of submarine
+	 */
+	public static final int SUBMARINE_SIZE = 1;
+	
+	private FleetModel() {}
+	/**
+	 * Returns total fleet size
+	 * @return - number of ships
+	 */
+	public static int getFleetSize() {
+<span class="fc" id="L58">		return  AIRCRAFTCARRIER_COUNT+BATTLESHIP_COUNT+</span>
+				CRUISER_COUNT + DESTROYER_COUNT + SUBMARINE_COUNT;
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>

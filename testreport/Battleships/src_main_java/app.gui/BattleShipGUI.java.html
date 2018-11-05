@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BattleShipGUI.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">app.gui</a> &gt; <span class="el_source">BattleShipGUI.java</span></div><h1>BattleShipGUI.java</h1><pre class="source lang-java linenums"><span class="nc" id="L1">package app.gui;</span>
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import app.gui.board.BoardPanel;
+import app.main.GameBattleships;
+import app.main.IGameBattleships;
+
+/**
+ *  Specifies Frame attributes and instantiates board objects, also provides main to start application
+ * @author Artur Vitt
+ *
+ */
+public class BattleShipGUI {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6127827786553906106L;
+	/**
+	 * Default Frame preferred height
+	 */
+	public static final int DEFAULT_HEIGHT = 650;
+	/**
+	 * Default Frame preferred height
+	 */
+	public static final int DEFAULT_WIDTH = 570;
+	/**
+	 * Default Frame preferred dimensions
+	 */
+<span class="nc" id="L35">	public static final Dimension DEFAULT_DIMENSION = new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT);</span>
+	
+	/**
+	 * Panel with tracking grid and primary grids
+	 */
+<span class="nc" id="L40">	private BoardPanel board = new BoardPanel();</span>
+
+ 
+	/**
+	 * Initiates frame with provided game
+	 * @param game - logical part of the game
+	 */
+<span class="nc" id="L47">    public BattleShipGUI(IGameBattleships game) {</span>
+<span class="nc" id="L48">    	JFrame frame = new JFrame(&quot;Battleship&quot;);</span>
+    	
+<span class="nc" id="L50">		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L51">		frame.setPreferredSize(DEFAULT_DIMENSION);</span>
+<span class="nc" id="L52">		frame.pack();</span>
+		
+<span class="nc" id="L54">		frame.setLayout(new FlowLayout());</span>
+<span class="nc" id="L55">		frame.add(board);</span>
+		
+<span class="nc" id="L57">		frame.getContentPane().setBackground(Color.WHITE);</span>
+<span class="nc" id="L58">		frame.setVisible(true);</span>
+<span class="nc" id="L59">		board.setEnemyBoard(game.getEnemyBoard());</span>
+<span class="nc" id="L60">		board.setMyBoard(game.getMyBoard());</span>
+		
+<span class="nc" id="L62">	}</span>
+
+	public static void main(String[] args) {
+        //Schedule a job for the event-dispatching thread:
+        //creating and showing this application's GUI.
+<span class="nc" id="L67">    	GameBattleships game = new GameBattleships();</span>
+<span class="nc" id="L68">        javax.swing.SwingUtilities.invokeLater(new Runnable() {</span>
+            public void run() {
+<span class="nc" id="L70">               new BattleShipGUI(game);</span>
+<span class="nc" id="L71">            }</span>
+        });
+<span class="nc" id="L73">    }</span>
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>

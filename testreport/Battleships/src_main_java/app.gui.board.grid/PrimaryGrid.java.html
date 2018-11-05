@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PrimaryGrid.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">app.gui.board.grid</a> &gt; <span class="el_source">PrimaryGrid.java</span></div><h1>PrimaryGrid.java</h1><pre class="source lang-java linenums">package app.gui.board.grid;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+
+/**
+ * Extends base Grid class to represent primary grid in game. 
+ * @author Artur Vitt
+ *
+ */
+public class PrimaryGrid extends Grid {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1012031768714672363L;
+
+	/**
+	 * Initiates grid with its location and size of single square on grid
+	 * @param gridStart start location for the grid
+	 * @param squareSize size of the division
+	 */
+<span class="nc" id="L23">	public PrimaryGrid(Point gridStart,int squareSize) {</span>
+<span class="nc" id="L24">		this.gridStart = gridStart;</span>
+<span class="nc" id="L25">		this.squareSize = squareSize;</span>
+<span class="nc" id="L26">		verticalTextScaleStart[0] =verticalTextScaleStart[0]+ gridStart.x-30;</span>
+<span class="nc" id="L27">		verticalTextScaleStart[1] =verticalTextScaleStart[1]+ gridStart.y;</span>
+<span class="nc" id="L28">		horizontalTextScaleStart[0] =horizontalTextScaleStart[0]+ gridStart.x-squareSize/9;</span>
+<span class="nc" id="L29">		horizontalTextScaleStart[1] =horizontalTextScaleStart[1]+ gridStart.y-squareSize/2;</span>
+<span class="nc" id="L30">	}</span>
+	
+	/**
+	 * Draws board state, using white to represent unaffected fields
+	 * yellow - attacked fields
+	 * red - squares where ships where attacked
+	 * @param g - graphical context
+	 * @param startLoc  start location in pixels
+	 * @param boardState  board state, multidimensional int array, 0 unaffected, 1 attacked, 2 hit
+	 * @param squareSize  square size in pixels
+	 */
+	private void renderBoardState(Graphics g,Point startLoc, int[][] boardState,int squareSize) {
+<span class="nc bnc" id="L42" title="All 2 branches missed.">		if(boardState != null) {</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">			for (int col = 0; col &lt; boardState.length; col++) {</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">				for (int row = 0; row &lt; boardState.length; row++) {</span>
+<span class="nc bnc" id="L45" title="All 4 branches missed.">					switch(boardState[col][row] ) {</span>
+					case 0:
+<span class="nc" id="L47">						g.setColor(Color.BLUE);</span>
+<span class="nc" id="L48">						break;</span>
+					case 1:
+<span class="nc" id="L50">						g.setColor(Color.WHITE);</span>
+<span class="nc" id="L51">						break;</span>
+					case 2:
+<span class="nc" id="L53">						g.setColor(Color.RED);</span>
+<span class="nc" id="L54">						break;</span>
+					default:
+<span class="nc" id="L56">						g.setColor(Color.BLUE);</span>
+						break;
+					}
+<span class="nc" id="L59">					g.fillRect(startLoc.x+col*squareSize,startLoc.y+row*squareSize,squareSize, squareSize);</span>
+				}
+			}
+		}				
+<span class="nc" id="L63">	}</span>
+	
+	@Override
+	public void draw(Graphics g) {
+<span class="nc" id="L67">		super.draw(g);</span>
+<span class="nc" id="L68">		renderBoardState(g, gridStart, board.getBoardState(), squareSize);</span>
+<span class="nc" id="L69">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>

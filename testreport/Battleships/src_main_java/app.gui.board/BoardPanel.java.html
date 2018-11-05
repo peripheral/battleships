@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BoardPanel.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">app.gui.board</a> &gt; <span class="el_source">BoardPanel.java</span></div><h1>BoardPanel.java</h1><pre class="source lang-java linenums">package app.gui.board;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import app.gui.board.grid.Grid;
+import app.gui.board.grid.PrimaryGrid;
+import app.gui.board.grid.TrackingGrid;
+import app.logics.board.EnemyBoard;
+import app.logics.board.IBoard;
+import app.logics.board.MyBoard;
+
+/**
+ * Class provides graphical interface for board. Board panel provides two grids. The smaller grid
+ * for tracking own ships and primary grid for tracking enemy grid. Grids are drawn on the panel.
+ * Result text line is not rendered manually, but a label placed on the panel.
+ * @author Artur Vitt
+ *
+ */
+public class BoardPanel extends JPanel{
+	/**
+	 * Default width in px
+	 */
+	public static final int DEFAULT_WIDTH = 550;
+	/**
+	 * Default height in px
+	 */
+	public static final int DEFAULT_HEIGHT = 600;
+	
+	/**
+	 * Squire size in pixels
+	 */
+<span class="nc" id="L41">	private int squareSizeTrackingGrid = 15;</span>
+	
+	/**
+	 * Squire size in pixels
+	 */
+<span class="nc" id="L46">	private int squareSizePrimaryGrid = 35;</span>
+	
+	
+
+	/**
+	 * Grid size in squares, 10 squares in width and height
+	 */
+<span class="nc" id="L53">	private int gridSize = 10;</span>
+	
+<span class="nc" id="L55">	private Point primaryGridStart = new Point(squareSizeTrackingGrid*(gridSize + 1)</span>
+<span class="nc" id="L56">													,squareSizeTrackingGrid*(gridSize + 1));</span>
+<span class="nc" id="L57">	private Point trackingGridStart = new Point(squareSizeTrackingGrid,squareSizeTrackingGrid);</span>
+	
+<span class="nc" id="L59">	private String resultOfShoot = &quot; Miss&quot;;</span>
+<span class="nc" id="L60">	private JLabel result = new JLabel(&quot;Result&quot;);</span>
+
+
+	private Grid primaryGrid;
+	private Grid trackingGrid;
+
+
+	/**
+	 * Instantiates primary grid and tracking grid(smaller one), sets BorderLayout
+	 */
+<span class="nc" id="L70">	public BoardPanel() {</span>
+<span class="nc" id="L71">		primaryGrid = new PrimaryGrid(primaryGridStart,squareSizePrimaryGrid);</span>
+<span class="nc" id="L72">		trackingGrid = new TrackingGrid(trackingGridStart,squareSizeTrackingGrid);</span>
+<span class="nc" id="L73">		setLayout(new BorderLayout());</span>
+<span class="nc" id="L74">		add(result,BorderLayout.SOUTH);</span>
+<span class="nc" id="L75">		setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));</span>
+<span class="nc" id="L76">		addMouseListener(new MouseListener());</span>
+<span class="nc" id="L77">	}</span>
+
+	@Override
+	public void paintComponent(Graphics g) {
+<span class="nc" id="L81">		super.paintComponent(g); </span>
+<span class="nc" id="L82">		primaryGrid.draw(g);</span>
+<span class="nc" id="L83">		trackingGrid.draw(g);</span>
+<span class="nc" id="L84">	}</span>
+
+	/**
+	 * Local class implements mouse listener on BoardPanels
+	 * @author Walter White
+	 *
+	 */
+<span class="nc" id="L91">	class MouseListener extends MouseAdapter{</span>
+		@Override
+		public void mousePressed(MouseEvent e) {
+<span class="nc" id="L94">			Point p = primaryGrid.getSquareCoordinates(e.getPoint());</span>
+<span class="nc" id="L95">			result.setText(&quot;Result:&quot;+primaryGrid.getBoard().fire(p.x, p.y));</span>
+<span class="nc" id="L96">			repaint();</span>
+<span class="nc" id="L97">			super.mousePressed(e);</span>
+<span class="nc" id="L98">		}		</span>
+	}
+
+	/**
+	 * Gets approximated id of the squire on grid
+	 * @param squareSize  size of square
+	 * @param p  pixel location on the Board panel
+	 * @return point with index for x,y dimensions
+	 */
+	public Point getSquareLocation(int squareSize,Point p) {
+<span class="nc" id="L108">		return new Point( (int) ((p.getX() - squareSize)/squareSize),</span>
+<span class="nc" id="L109">				(int) ((p.getY() - squareSize)/squareSize));</span>
+	}
+
+	/**
+	 * Sets the logical board for enemyBoard, to be displayed on primary grid
+	 * @param enemyBoard - logical enemy board, with placed ships
+	 */
+	public void setEnemyBoard(IBoard enemyBoard) {
+<span class="nc" id="L117">		primaryGrid.setBoard(enemyBoard);		</span>
+<span class="nc" id="L118">	}</span>
+	
+	/**
+	 * Sets the logical board for playerBoard, to be displayed on tracking grid
+	 * @param myBoard -logical player board
+	 */
+	public void setMyBoard(IBoard myBoard) {
+<span class="nc" id="L125">		trackingGrid.setBoard(myBoard);		</span>
+<span class="nc" id="L126">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>

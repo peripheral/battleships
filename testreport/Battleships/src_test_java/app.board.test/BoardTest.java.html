@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>BoardTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Battleships (Nov 5, 2018 5:29:35 AM)</a> &gt; <a href="../../index.html" class="el_group">Battleships</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">app.board.test</a> &gt; <span class="el_source">BoardTest.java</span></div><h1>BoardTest.java</h1><pre class="source lang-java linenums">package app.board.test;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Random;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import app.logics.board.Board;
+import app.logics.board.fleet.FleetModel;
+import app.logics.board.fleet.factory.FleetFactory;
+import app.logics.board.ship.Aircraftcarrier;
+import app.logics.board.ship.Battleship;
+import app.logics.board.ship.Cruiser;
+import app.logics.board.ship.Destroyer;
+import app.logics.board.ship.Ship;
+import app.logics.board.ship.Submarine;
+import app.logics.board.ship.Ship.ORIENTATION;
+
+<span class="fc" id="L24">public class BoardTest {</span>
+private Board sut;
+
+	
+	@BeforeEach
+	void init() {
+<span class="fc" id="L30">		sut = new Board();</span>
+<span class="fc" id="L31">	}	</span>
+	
+	/**
+	 * Test method isSpaceAvailable-
+	 * input data: ship size - 5, startY- 0, startX -0, orientation-horizontal
+	 * board - 	[false,false,true ,true,false,false ]
+				[true ,true ,false,false,false,false]
+				[true,false,false ,false,false,true]
+		true define if space is taken, false -space is available
+		method should return false - slots (0-5,0) are not free
+	 */
+	@Test
+	void testIsSpaceAvailableShouldReturnFalse() {
+<span class="fc" id="L44">		int startX = 0;</span>
+<span class="fc" id="L45">		int startY = 0;</span>
+<span class="fc" id="L46">		boolean[][] board = {{false,false,true,true,false,false},</span>
+<span class="fc" id="L47">							{true,true,false,false,false,false},</span>
+<span class="fc" id="L48">							{true,false,false,false,false,false}};</span>
+<span class="fc" id="L49">		ORIENTATION orientation = ORIENTATION.HORIZONTAL;</span>
+<span class="fc" id="L50">		Ship ship = new Aircraftcarrier();</span>
+<span class="fc" id="L51">		ship.setStartLocation(new int[] {startX,startY});</span>
+<span class="fc" id="L52">		ship.setOrientation(orientation);</span>
+<span class="fc" id="L53">		boolean actual = sut.isSpaceAvailable(board, ship);</span>
+<span class="fc" id="L54">		assertFalse(actual);</span>
+<span class="fc" id="L55">	}</span>
+	
+	/**
+	 * Test method isSpaceAvailable-
+	 * input data: ship size - 5, startY- 2, startX - 1, orientation-horizontal
+	 * board - 	[false,false,true ,true,false,false ]
+				[true ,true ,false,false,false,false]
+				[true ,false,false,false,false,false]
+		true define if space is taken, false -space is available
+		method should return false - slots (1-4,2) are free
+	 */
+	@Test
+	void testIsSpaceAvailableShouldReturnTrue() {
+<span class="fc" id="L68">		int startX = 2;</span>
+<span class="fc" id="L69">		int startY = 1;</span>
+<span class="fc" id="L70">		boolean[][] board = {{false,false,true,true,false,false},</span>
+<span class="fc" id="L71">							{true,true,false,false,false,false},</span>
+<span class="fc" id="L72">							{true,false,false,false,false,false}};</span>
+<span class="fc" id="L73">		ORIENTATION orientation = ORIENTATION.VERTICAL;</span>
+<span class="fc" id="L74">		Ship ship = new Aircraftcarrier();</span>
+<span class="fc" id="L75">		ship.setStartLocation(new int[] {startX,startY});</span>
+<span class="fc" id="L76">		ship.setOrientation(orientation);</span>
+<span class="fc" id="L77">		boolean actual = sut.isSpaceAvailable(board, ship);</span>
+<span class="fc" id="L78">		assertTrue(actual);</span>
+<span class="fc" id="L79">	}</span>
+	
+	/**
+	 * Test method isSpaceAvailable-
+	 * input data: ship size - 5, startY- 3, startX - 1, orientation-horizontal
+	 * board - 	[false,false,true ,true ]
+				[true ,true ,false,false]
+				[true,false,false ,false]
+		true define if space is taken, false -space is available
+		method should return false - slots (1-4,3) are free
+	 */
+	@Test
+	void testIsSpaceAvailableShouldReturnFalseOutofbounds() {
+<span class="fc" id="L92">		int startX = 1;</span>
+<span class="fc" id="L93">		int startY = 3;</span>
+<span class="fc" id="L94">		boolean[][] board = {{false,false,true,true},</span>
+<span class="fc" id="L95">							{true,true,false,false},</span>
+<span class="fc" id="L96">							{true,false,false,false}};</span>
+<span class="fc" id="L97">		ORIENTATION orientation = ORIENTATION.HORIZONTAL;</span>
+<span class="fc" id="L98">		Ship ship = new Aircraftcarrier();</span>
+<span class="fc" id="L99">		ship.setStartLocation(new int[] {startX,startY});</span>
+<span class="fc" id="L100">		ship.setOrientation(orientation);</span>
+<span class="fc" id="L101">		boolean actual = sut.isSpaceAvailable(board, ship);</span>
+<span class="fc" id="L102">		assertFalse(actual);</span>
+<span class="fc" id="L103">	}</span>
+	
+	/**
+	 * Test method selectPosition -
+	 * input data: ship size - 5, startY- 3, startX - 1, orientation-vertical
+	 * board - 	[false,false ,true ,true , false]
+				[false,false ,false,false, false]
+				[true ,false ,false,false, false]
+		true define if space is taken, false -space is available
+		method should return false - slots (1-4,3) are free
+	 */
+	@Test
+	void testSelectPositionShouldReturn1_0() {
+<span class="fc" id="L116">		int startX = 1;</span>
+<span class="fc" id="L117">		int startY = 3;</span>
+<span class="fc" id="L118">		boolean[][] board = {{false,false,true ,true ,false },</span>
+<span class="fc" id="L119">							{ false,false,false,false,false },</span>
+<span class="fc" id="L120">							{ true ,false,false,false,false }};</span>
+<span class="fc" id="L121">		ORIENTATION orientation = ORIENTATION.VERTICAL;</span>
+<span class="fc" id="L122">		Ship ship = new Aircraftcarrier();</span>
+<span class="fc" id="L123">		ship.setStartLocation(new int[] {startX,startY});</span>
+<span class="fc" id="L124">		ship.setOrientation(orientation);</span>
+<span class="fc" id="L125">		int[] expecteds = {1,0};</span>
+<span class="fc" id="L126">		int[] actuals = sut.findFreePosition(board, ship);</span>
+<span class="fc" id="L127">		assertArrayEquals(expecteds, actuals);</span>
+<span class="fc" id="L128">	}</span>
+	
+	/**
+	 * Test method selectPosition -
+	 * input data: ship size - 5, startY- 3, startX - 1, orientation-vertical
+	 * board - 	[false,false,true ,true ]
+				[true ,true ,false,false]
+				[true,false,false ,false]
+		true define if space is taken, false -space is available
+		method should return false - slots (1-4,3) are free
+	 */
+	@Test
+	void testSelectPositionReturnsMinus1Minus1() {
+<span class="fc" id="L141">		int startX = 1;</span>
+<span class="fc" id="L142">		int startY = 3;</span>
+<span class="fc" id="L143">		boolean[][] board = {{false,false,true ,true ,false },</span>
+<span class="fc" id="L144">							{ false,false,true,false,false },</span>
+<span class="fc" id="L145">							{ true ,false,false,false,false }};</span>
+<span class="fc" id="L146">		ORIENTATION orientation = ORIENTATION.VERTICAL;</span>
+<span class="fc" id="L147">		Ship ship = new Aircraftcarrier();</span>
+<span class="fc" id="L148">		ship.setStartLocation(new int[] {startX,startY});</span>
+<span class="fc" id="L149">		ship.setOrientation(orientation);</span>
+<span class="fc" id="L150">		int[] expecteds = {-1,-1};</span>
+<span class="fc" id="L151">		int[] actuals = sut.findFreePosition(board, ship);</span>
+<span class="fc" id="L152">		assertArrayEquals(expecteds, actuals);</span>
+<span class="fc" id="L153">	}</span>
+	
+	/**
+	 * Test method fire(i,i) should return hit
+	 */
+	@Test
+	void testFireShouldReturnHit() {
+<span class="fc" id="L160">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L161">		int idx = 0;</span>
+<span class="fc" id="L162">		int shipLocationX = 2;</span>
+<span class="fc" id="L163">		int shipLocationY = 2;</span>
+<span class="fc" id="L164">		Ship[] ships = FleetFactory.getFleet();</span>
+<span class="fc" id="L165">		sut.setShips(ships);</span>
+		
+<span class="fc" id="L167">		ships[idx].setStartX(shipLocationX);</span>
+<span class="fc" id="L168">		ships[idx].setStartY(shipLocationY);</span>
+<span class="fc" id="L169">		sut.markOccupiedSectors(occupiedFields, ships[idx]);</span>
+<span class="fc" id="L170">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L171">		String expecteds = Board.MESSAGE_HIT;</span>
+<span class="fc" id="L172">		String actuals = sut.fire(shipLocationX, shipLocationY);</span>
+<span class="fc" id="L173">		assertEquals(expecteds, actuals);</span>
+<span class="fc" id="L174">	}</span>
+	
+	/**
+	 * Test method fire(2,'A') should return hit
+	 */
+	@Test
+	void testFireWithCharCapShouldReturnHit() {
+<span class="fc" id="L181">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L182">		int idx = 0;</span>
+<span class="fc" id="L183">		int shipLocationX = 2;</span>
+<span class="fc" id="L184">		int shipLocationY = 0;</span>
+<span class="fc" id="L185">		char shipLocation =  'A';</span>
+<span class="fc" id="L186">		Ship[] ships = FleetFactory.getFleet();</span>
+<span class="fc" id="L187">		sut.setShips(ships);</span>
+		
+<span class="fc" id="L189">		ships[idx].setStartX(shipLocationX);</span>
+<span class="fc" id="L190">		ships[idx].setStartY(shipLocationY);</span>
+<span class="fc" id="L191">		sut.markOccupiedSectors(occupiedFields, ships[idx]);</span>
+<span class="fc" id="L192">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L193">		String expecteds = Board.MESSAGE_HIT;</span>
+<span class="fc" id="L194">		String actuals = sut.fire(shipLocationX, shipLocation);</span>
+<span class="fc" id="L195">		assertEquals(expecteds, actuals);</span>
+<span class="fc" id="L196">	}</span>
+	
+	/**
+	 * Test method fire(2,'a') should return hit
+	 */
+	@Test
+	void testFireWithCharShouldReturnHit() {
+<span class="fc" id="L203">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L204">		int idx = 0;</span>
+<span class="fc" id="L205">		int shipLocationX = 2;</span>
+<span class="fc" id="L206">		int shipLocationY = 0;</span>
+<span class="fc" id="L207">		char shipLocation =  'a';</span>
+<span class="fc" id="L208">		Ship[] ships = FleetFactory.getFleet();</span>
+<span class="fc" id="L209">		sut.setShips(ships);</span>
+		
+<span class="fc" id="L211">		ships[idx].setStartX(shipLocationX);</span>
+<span class="fc" id="L212">		ships[idx].setStartY(shipLocationY);</span>
+<span class="fc" id="L213">		sut.markOccupiedSectors(occupiedFields, ships[idx]);</span>
+<span class="fc" id="L214">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L215">		String expecteds = Board.MESSAGE_HIT;</span>
+<span class="fc" id="L216">		String actuals = sut.fire(shipLocationX, shipLocation);</span>
+<span class="fc" id="L217">		assertEquals(expecteds, actuals);</span>
+<span class="fc" id="L218">	}</span>
+	/**
+	 * Test method fire(0,'a') should return &quot;You sank my battleship&quot;
+	 */
+	@Test
+	void testFireWithCharShouldReturnYouSankMyBattleShips() {
+<span class="fc" id="L224">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L225">		int idx = 0;</span>
+<span class="fc" id="L226">		int shipLocationX = 0;</span>
+<span class="fc" id="L227">		int shipLocationY = 0;</span>
+<span class="fc" id="L228">		char shipLocationCharY =  'a';</span>
+<span class="fc" id="L229">		Ship[] ships = new Ship[2];</span>
+<span class="fc" id="L230">		ships[0] = new Submarine();</span>
+		/* one extra to not get All ships sunken*/
+<span class="fc" id="L232">		ships[1] = new Submarine();</span>
+<span class="fc" id="L233">		ships[1].setStartLocation(new int[] {9,9});</span>
+
+		
+		
+<span class="fc" id="L237">		sut.setShips(ships);</span>
+<span class="fc" id="L238">		sut.setOccupiedFields(occupiedFields);</span>
+		
+<span class="fc" id="L240">		ships[idx].setStartX(shipLocationX);</span>
+<span class="fc" id="L241">		ships[idx].setStartY(shipLocationY);</span>
+<span class="fc" id="L242">		sut.markOccupiedSectors(occupiedFields, ships[0]);</span>
+<span class="fc" id="L243">		sut.markOccupiedSectors(occupiedFields, ships[1]);</span>
+<span class="fc" id="L244">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L245">		String expecteds = Board.MESSAGE_SANK;</span>
+<span class="fc" id="L246">		String actuals = sut.fire(shipLocationX, shipLocationCharY);</span>
+<span class="fc" id="L247">		assertEquals(expecteds, actuals);</span>
+<span class="fc" id="L248">	}</span>
+	
+	/**
+	 * Test method fire(0,'a') should return &quot;You sank my battleship&quot;
+	 */
+	@Test
+	void testFireWithCharShouldReturnAllShipsSank() {
+<span class="fc" id="L255">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L256">		int idx = 0;</span>
+<span class="fc" id="L257">		int shipLocationX = 0;</span>
+<span class="fc" id="L258">		int shipLocationY = 0;</span>
+<span class="fc" id="L259">		char shipLocationCharY =  'a';</span>
+<span class="fc" id="L260">		Ship[] ships = new Ship[2];</span>
+<span class="fc" id="L261">		ships[0] = new Submarine();</span>
+		/* one extra to not get All ships sunken*/
+<span class="fc" id="L263">		ships[1] = new Submarine();</span>
+<span class="fc" id="L264">		ships[1].setStartLocation(new int[] {9,9});</span>
+
+		
+		
+<span class="fc" id="L268">		sut.setShips(ships);</span>
+<span class="fc" id="L269">		sut.setOccupiedFields(occupiedFields);</span>
+		
+<span class="fc" id="L271">		ships[idx].setStartX(shipLocationX);</span>
+<span class="fc" id="L272">		ships[idx].setStartY(shipLocationY);</span>
+<span class="fc" id="L273">		sut.markOccupiedSectors(occupiedFields, ships[0]);</span>
+<span class="fc" id="L274">		sut.markOccupiedSectors(occupiedFields, ships[1]);</span>
+<span class="fc" id="L275">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L276">		sut.fire(9, 9);</span>
+<span class="fc" id="L277">		String expecteds = Board.MESSAGE_ALL_DESTROYED;</span>
+<span class="fc" id="L278">		String actuals = sut.fire(shipLocationX, shipLocationCharY);</span>
+<span class="fc" id="L279">		assertEquals(expecteds, actuals);</span>
+<span class="fc" id="L280">	}</span>
+	
+	/**
+	 * Test method fire(0,'a') should return Miss
+	 */
+	@Test
+	void testFireWithCharShouldReturnMiss() {
+<span class="fc" id="L287">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L288">		int idx = 0;</span>
+<span class="fc" id="L289">		int shipLocationX = 0;</span>
+<span class="fc" id="L290">		int shipLocationY = 1;</span>
+<span class="fc" id="L291">		char shipLocationCharY =  'a';</span>
+<span class="fc" id="L292">		Ship[] ships = new Ship[2];</span>
+<span class="fc" id="L293">		ships[0] = new Submarine();</span>
+		/* one extra to not get All ships sunken*/
+<span class="fc" id="L295">		ships[1] = new Submarine();</span>
+<span class="fc" id="L296">		ships[1].setStartLocation(new int[] {9,9});</span>
+
+		
+		
+<span class="fc" id="L300">		sut.setShips(ships);</span>
+<span class="fc" id="L301">		sut.setOccupiedFields(occupiedFields);</span>
+		
+<span class="fc" id="L303">		ships[idx].setStartX(shipLocationX);</span>
+<span class="fc" id="L304">		ships[idx].setStartY(shipLocationY);</span>
+<span class="fc" id="L305">		sut.markOccupiedSectors(occupiedFields, ships[0]);</span>
+<span class="fc" id="L306">		sut.markOccupiedSectors(occupiedFields, ships[1]);</span>
+<span class="fc" id="L307">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L308">		String expecteds = Board.MESSAGE_MISS;</span>
+<span class="fc" id="L309">		String actuals = sut.fire(shipLocationX, shipLocationCharY);</span>
+<span class="fc" id="L310">		assertEquals(expecteds, actuals);</span>
+<span class="fc" id="L311">	}</span>
+	
+	/**
+	 * Test method fire(0,11) should return Miss
+	 */
+	@Test
+	void testFireWithCharOutsideOfBoundShouldReturnMiss() {
+<span class="fc" id="L318">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L319">		int idx = 0;</span>
+<span class="fc" id="L320">		int shipLocationX = 0;</span>
+<span class="fc" id="L321">		int shipLocationY = 1;</span>
+<span class="fc" id="L322">		int shootLocationY =  11;</span>
+<span class="fc" id="L323">		Ship[] ships = new Ship[2];</span>
+<span class="fc" id="L324">		ships[0] = new Submarine();</span>
+		/* one extra to not get All ships sunken*/
+<span class="fc" id="L326">		ships[1] = new Submarine();</span>
+<span class="fc" id="L327">		ships[1].setStartLocation(new int[] {9,9});</span>
+
+		
+		
+<span class="fc" id="L331">		sut.setShips(ships);</span>
+<span class="fc" id="L332">		sut.setOccupiedFields(occupiedFields);</span>
+		
+<span class="fc" id="L334">		ships[idx].setStartX(shipLocationX);</span>
+<span class="fc" id="L335">		ships[idx].setStartY(shipLocationY);</span>
+<span class="fc" id="L336">		sut.markOccupiedSectors(occupiedFields, ships[0]);</span>
+<span class="fc" id="L337">		sut.markOccupiedSectors(occupiedFields, ships[1]);</span>
+<span class="fc" id="L338">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L339">		String expecteds = Board.MESSAGE_MISS;</span>
+<span class="fc" id="L340">		String actuals = sut.fire(shipLocationX, shootLocationY);</span>
+<span class="fc" id="L341">		assertEquals(expecteds, actuals);</span>
+<span class="fc" id="L342">	}</span>
+	
+	/**
+	 * Test method fire(2,'*') should return &quot;Wrong Address, must be 1-10, a-j,A-J&quot;
+	 */
+	@Test
+	void testFireWithCharShouldReturnWrongAddress() {
+<span class="fc" id="L349">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L350">		int idx = 0;</span>
+<span class="fc" id="L351">		int shipLocationX = 2;</span>
+<span class="fc" id="L352">		int shipLocationY = 0;</span>
+<span class="fc" id="L353">		char shipLocation =  '*';</span>
+<span class="fc" id="L354">		Ship[] ships = FleetFactory.getFleet();</span>
+<span class="fc" id="L355">		sut.setShips(ships);</span>
+		
+<span class="fc" id="L357">		ships[idx].setStartX(shipLocationX);</span>
+<span class="fc" id="L358">		ships[idx].setStartY(shipLocationY);</span>
+<span class="fc" id="L359">		sut.markOccupiedSectors(occupiedFields, ships[idx]);</span>
+<span class="fc" id="L360">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L361">		String expecteds = Board.MESSAGE_WRONG_ADDRESS;</span>
+<span class="fc" id="L362">		String actuals = sut.fire(shipLocationX, shipLocation);</span>
+<span class="fc" id="L363">		assertEquals(expecteds, actuals);</span>
+<span class="fc" id="L364">	}</span>
+	
+
+	/**
+	 * Test method get boardState
+	 */
+	@Test
+	void testGetBoardState() {
+<span class="fc" id="L372">		boolean[][] occupiedFields = new boolean[10][10];</span>
+<span class="fc" id="L373">		boolean[][] attackedFields = new boolean[10][10];</span>
+<span class="fc" id="L374">		int[][] expecteds = new int[10][10];</span>
+<span class="fc" id="L375">		occupiedFields[0][0] = true;</span>
+<span class="fc" id="L376">		attackedFields[0][0] = true;</span>
+<span class="fc" id="L377">		expecteds[0][0] = 2;</span>
+<span class="fc" id="L378">		occupiedFields[0][9] = true;</span>
+<span class="fc" id="L379">		attackedFields[0][9] = true;</span>
+<span class="fc" id="L380">		expecteds[0][9] = 2;</span>
+<span class="fc" id="L381">		occupiedFields[9][9] = true;</span>
+<span class="fc" id="L382">		attackedFields[9][9] = true;</span>
+<span class="fc" id="L383">		expecteds[9][9] = 2;</span>
+<span class="fc" id="L384">		occupiedFields[0][0] = false;</span>
+<span class="fc" id="L385">		attackedFields[0][0] = true;</span>
+<span class="fc" id="L386">		expecteds[0][0] = 1;</span>
+<span class="fc" id="L387">		occupiedFields[0][2] = false;</span>
+<span class="fc" id="L388">		attackedFields[0][2] = true;</span>
+<span class="fc" id="L389">		expecteds[0][2] = 1;</span>
+			
+<span class="fc" id="L391">		sut.setOccupiedFields(occupiedFields);</span>
+<span class="fc" id="L392">		sut.setAttackedFields(attackedFields);</span>
+<span class="fc" id="L393">		int[][] actuals = sut.getBoardState();</span>
+<span class="fc" id="L394">		assertArrayEquals(expecteds, actuals);</span>
+<span class="fc" id="L395">	}</span>
+	
+	/**
+	 * Test positionShipsRandomly() - compares occupied fields after and 
+	 * expected occupied fields
+	 */
+	@Test
+	void testPositionRandomlyMustReturnSameSizeOFOccupiedFields() {
+<span class="fc" id="L403">		Ship[] ships = FleetFactory.getFleet();</span>
+<span class="fc" id="L404">		sut.setShips(ships);</span>
+<span class="fc" id="L405">		sut.positionShipsRandomly();</span>
+<span class="fc" id="L406">		int actual = 0;</span>
+<span class="fc" id="L407">		boolean[][] fields = sut.getOccupiedFields();</span>
+<span class="fc bfc" id="L408" title="All 2 branches covered.">		for (int col = 0; col &lt; fields.length; col++) {</span>
+<span class="fc bfc" id="L409" title="All 2 branches covered.">			for (int row = 0; row &lt; fields.length; row++) {</span>
+<span class="fc bfc" id="L410" title="All 2 branches covered.">				if(fields[col][row]) {</span>
+<span class="fc" id="L411">					actual++;</span>
+				}
+			}
+		}
+<span class="fc" id="L415">		int expected = FleetModel.AIRCRAFTCARRIER_COUNT*FleetModel.AIRCRAFTCARRIER_SIZE</span>
+				+FleetModel.BATTLESHIP_COUNT*FleetModel.BATTLESHIP_SIZE
+				+FleetModel.CRUISER_COUNT*FleetModel.CRUISER_SIZE
+				+FleetModel.DESTROYER_COUNT*FleetModel.DESTROYER_SIZE
+				+FleetModel.SUBMARINE_COUNT*FleetModel.SUBMARINE_SIZE; 
+<span class="fc" id="L420">		assertEquals(expected, actual);</span>
+<span class="fc" id="L421">	}</span>
+	
+
+
+	/**
+	 * Test getLeftSquares 
+	 */
+	@Test
+	void testGetLeftSquaresShouldReturn2() {
+<span class="fc" id="L430">		Ship ship = new Aircraftcarrier();</span>
+<span class="fc" id="L431">		ship.setStartX(2);</span>
+<span class="fc" id="L432">		ship.setStartY(0);</span>
+<span class="fc" id="L433">		ship.setOrientation(ORIENTATION.VERTICAL);</span>
+<span class="fc" id="L434">		boolean[][] attackedField = {{false,false,false,false,false,false},</span>
+<span class="fc" id="L435">							{false,false,false,false,false,false},</span>
+<span class="fc" id="L436">							{false,true,true,false,true,false}};</span>
+<span class="fc" id="L437">		int actual = sut.getLeftSquares(attackedField, ship);</span>
+<span class="fc" id="L438">		int expected = 2;</span>
+<span class="fc" id="L439">		assertEquals(expected, actual);</span>
+<span class="fc" id="L440">	}</span>
+	
+	/**
+	 * Test set get ships
+	 */
+	@Test
+	void testSetGetShips() {
+<span class="fc" id="L447">		Ship[] expected = FleetFactory.getFleet();</span>
+<span class="fc" id="L448">		sut.setShips(expected);</span>
+		
+<span class="fc" id="L450">		Ship[] actual = sut.getShips();</span>
+	
+<span class="fc" id="L452">		assertEquals(expected, actual);</span>
+<span class="fc" id="L453">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>Battleships (Nov 5, 2018 5:29:35 AM)</div></body></html>
