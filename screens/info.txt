@@ -1,0 +1,7 @@
+Images describe current state of application.
+To interact the user clicks on the large grid. The top left grid present users ships configuration.
+ Image At_start show application at start.
+ Image HitAction show result if user clicked on sector where ship is placed.
+ Image MissAction shows the result when user clicks on the empty field.
+ Image YouSankMyBattleship shows the result when user has clicked on the last square of the ship.
+ Image AllShipsDestroyed shows the result of finding all of the squares occupied by the ships.
